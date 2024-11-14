@@ -71,18 +71,20 @@ const WelcomePage = ({ userName, onContinue }) => {
   );
 };
 
-// Final Page Component
-const FinalPage = ({ color, size }) => {
+// Modified Final Page Component with Start Over button
+const FinalPage = ({ color, size, onStartOver }) => {
   const [showContent, setShowContent] = useState(false);
   const [showIcons, setShowIcons] = useState(false);
   const [showTshirt, setShowTshirt] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setShowContent(true), 100);
     setTimeout(() => setShowIcons(true), 500);
     setTimeout(() => setShowTshirt(true), 1000);
     setTimeout(() => setShowDetails(true), 1500);
+    setTimeout(() => setShowButton(true), 2000);
   }, []);
 
   return (
@@ -117,6 +119,16 @@ const FinalPage = ({ color, size }) => {
           <p className="text-xl text-green-600 font-semibold">
             Your T-shirt design has been saved! 🌟
           </p>
+        </div>
+        
+        {/* Start Over Button */}
+        <div className={`mt-8 text-center transition-all duration-1000 ${showButton ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+          <Button
+            onClick={onStartOver}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-full text-lg animate-pulse"
+          >
+            Design Another T-shirt
+          </Button>
         </div>
       </div>
     </div>
@@ -263,6 +275,25 @@ const TshirtApp = () => {
     }
   };
 
+  const handleStartOver = () => {
+    setStep(1);
+    setFormData({
+      phone: "",
+      fullName: "",
+      email: "",
+      color: "",
+      size: ""
+    });
+    setError("");
+    setSuccess("");
+    setIsVerified(false);
+    setShowFinal(false);
+    setShowWelcome(false);
+    setShowConfirmation(false);
+    setSelectedSize("");
+    setHistory([]);
+  };
+
   return (
     <Card className="w-full max-w-xl mx-auto">
       <CardHeader>
@@ -296,6 +327,7 @@ const TshirtApp = () => {
           <FinalPage 
             color={formData.color}
             size={formData.size}
+            onStartOver={handleStartOver}
           />
         ) : (
           <>
@@ -358,7 +390,7 @@ const TshirtApp = () => {
                     <Button
                       key={color}
                       onClick={() => selectColor(color)}
-                      className="h-20 capitalize"
+                      className="h-20 capitalize transition-all duration-300 transform hover:scale-105"
                       style={{
                         backgroundColor: color,
                         color: ['yellow', 'green'].includes(color) ? 'black' : 'white'
@@ -380,12 +412,15 @@ const TshirtApp = () => {
                       key={size}
                       onClick={() => selectSize(size)}
                       variant="outline"
-                      className="h-16"
+                      className="h-16 transition-all duration-300 transform hover:scale-105 hover:bg-gray-100"
                     >
                       {size}
                     </Button>
                   ))}
                 </div>
+                <p className="text-sm text-gray-500 text-center mt-4">
+                  Click a size to confirm your selection
+                </p>
               </div>
             )}
           </>
